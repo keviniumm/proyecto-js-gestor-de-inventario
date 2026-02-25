@@ -1,19 +1,19 @@
 //array inventario
 const inventario = [];
 
-//menú pantalla
+/* //menú pantalla
 function mostrarMenu() {
     return prompt(
-        `📦 GESTOR DE INVENTARIOS
+        ` GESTOR DE INVENTARIOS
 1 - Agregar producto
 2 - Buscar producto
 3 - Actualizar stock
 4 - Eliminar producto
 0 - Salir`
     );
-}
+} */
 
-//menu 
+/* //menu 
 let menu;
 
 while (menu !== "0") {
@@ -38,28 +38,27 @@ while (menu !== "0") {
         default:
             alert("Opción inválida");
     }
-}
+} */
 
 //agregar producto
-function agregarProducto() {
-    const nombre = prompt("Ingrese el nombre del producto:");
-    const precio = Number(prompt("Ingrese el precio:"));
-    const stock = Number(prompt("Ingrese el stock inicial:"));
 
-    if (nombre == "" || precio <= 0 || stock < 0) {
-        alert("Datos inválidos");
-        return;
-    }
-
+document.querySelector("#agregarProducto").addEventListener("click", () => {
     const producto = {
-        nombre: nombre,
-        precio: precio,
-        stock: stock
-    };
+        nombre: document.querySelector("#nombre").value,
+        precio: parseFloat(document.querySelector("#precio").value),
+        stock: parseInt(document.querySelector("#stock").value)
+    }
+    inventario.push(producto)
+    console.log(inventario)
+    
+    document.querySelector("#nombre").value = "" 
+    document.querySelector("#precio").value = "" 
+    document.querySelector("#stock").value = "" 
+})
 
-    inventario.push(producto);
-    alert("Producto agregado");
-}
+
+
+
 
 //buscar producto
 function buscarProducto() {
@@ -105,7 +104,7 @@ function actualizarStock() {
         return;
     }
 
-    const nuevoStock = Number(prompt("Ingrese el nuevo stock:"));
+    const nuevoStock = parseInt(prompt("Ingrese el nuevo stock:"));
 
     if (nuevoStock >= 0) {
         producto.stock = nuevoStock;
