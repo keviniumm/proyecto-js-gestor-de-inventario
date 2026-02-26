@@ -42,20 +42,37 @@ while (menu !== "0") {
 
 //agregar producto
 
-document.querySelector("#agregarProducto").addEventListener("click", () => {
-    const producto = {
-        nombre: document.querySelector("#nombre").value,
-        precio: parseFloat(document.querySelector("#precio").value),
-        stock: parseInt(document.querySelector("#stock").value)
-    }
-    inventario.push(producto)
-    console.log(inventario)
-    
-    document.querySelector("#nombre").value = "" 
-    document.querySelector("#precio").value = "" 
-    document.querySelector("#stock").value = "" 
-})
+//boton navegador
+const botonAgregarP = document.querySelector("#agregarP")
+if (botonAgregarP) {
+    document.querySelector("#agregarP").addEventListener("click", () => {
+        window.location.href = "./pages/agregarProductos.html#agregarProducto"
+    })
+}
 
+const botonAgregar = document.querySelector("#agregar")
+if (botonAgregar) {
+    document.querySelector("#agregar").addEventListener("click", () => {
+        const producto = {
+            nombre: document.querySelector("#nombre").value,
+            precio: parseFloat(document.querySelector("#precio").value),
+            stock: parseInt(document.querySelector("#stock").value)
+        }
+        inventario.push(producto)
+        console.log(inventario)
+
+        document.querySelector("#nombre").value = ""
+        document.querySelector("#precio").value = ""
+        document.querySelector("#stock").value = ""
+    })
+}
+
+const botonVolverMenuA = document.querySelector("#salir")
+if(botonVolverMenuA){
+    document.querySelector("#salir").addEventListener("click", ()=> {
+        window.location.href = "../index.html"
+    })
+}
 
 
 
