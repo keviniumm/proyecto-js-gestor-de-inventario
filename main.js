@@ -40,7 +40,7 @@ while (menu !== "0") {
     }
 } */
 
-//agregar producto
+//AGREGAR PRODUCTOS
 
 //boton navegador
 const botonAgregarP = document.querySelector("#agregarP")
@@ -67,42 +67,39 @@ if (botonAgregar) {
     })
 }
 
+//boton volver menu
 const botonVolverMenuA = document.querySelector("#salir")
-if(botonVolverMenuA){
-    document.querySelector("#salir").addEventListener("click", ()=> {
+if (botonVolverMenuA) {
+    document.querySelector("#salir").addEventListener("click", () => {
         window.location.href = "../index.html"
     })
 }
 
 
+//BUSCAR PRODUCTO
 
-
-//buscar producto
-function buscarProducto() {
-    const nombreBuscado = prompt("Ingrese el nombre del producto:");
-    let productoEncontrado = null;
-
-    for (let i = 0; i < inventario.length; i++) {
-        if (inventario[i].nombre === nombreBuscado) {
-            productoEncontrado = inventario[i];
-            break;
-        }
-    }
-
-
-    const resultado = productoEncontrado ?? "no encontrado";
-
-    if (resultado !== "no encontrado") {
-        alert(
-            ` PRODUCTO ENCONTRADO
-Nombre: ${productoEncontrado.nombre}
-Precio: ${productoEncontrado.precio}
-Stock: ${productoEncontrado.stock}`
-        );
-    } else {
-        alert("Producto no encontrado");
-    }
+//boton navegador
+const botonBuscarP = document.querySelector("#buscarP")
+if (botonBuscarP) {
+    document.querySelector("#buscarP").addEventListener("click", () => {
+        window.location.href = "./pages/buscarProducto.html#buscador"
+    })
 }
+
+const buscador = document.querySelector("#botonBuscador")
+if (buscador) {
+    buscador.addEventListener("click", () => {
+        const valorBuscado = document.querySelector("#productoBusacado").value
+
+        const productoEcontrado = inventario.find(
+            producto => producto.nombre === valorBuscado
+        )
+        console.log(productoEcontrado)
+    })
+}
+
+
+
 
 //actualizar stock
 function actualizarStock() {
