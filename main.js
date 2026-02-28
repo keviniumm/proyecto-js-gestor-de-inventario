@@ -90,7 +90,7 @@ if (botonBuscarP) {
 const buscador = document.querySelector("#botonBuscador")
 if (buscador) {
     buscador.addEventListener("click", () => {
-        const valorBuscado = document.querySelector("#productoBusacado").value
+        const valorBuscado = document.querySelector("#productoBuscado").value
 
         const productoEcontrado = inventario.find(
             producto => producto.nombre === valorBuscado
@@ -102,32 +102,66 @@ if (buscador) {
 
 
 
-//actualizar stock
-function actualizarStock() {
-    const nombre = prompt("Ingrese el nombre del producto:");
-    let producto = null;
+//ACTUALIZAR STOCK
 
-    for (let i = 0; i < inventario.length; i++) {
-        if (inventario[i].nombre === nombre) {
-            producto = inventario[i];
-            break;
-        }
-    }
-
-    if (!producto) {
-        alert("Producto no encontrado");
-        return;
-    }
-
-    const nuevoStock = parseInt(prompt("Ingrese el nuevo stock:"));
-
-    if (nuevoStock >= 0) {
-        producto.stock = nuevoStock;
-        alert("Stock actualizado correctamente");
-    } else {
-        alert("Stock inválido");
-    }
+//boton navegador
+const botonActualizarP = document.querySelector("#actualizarP")
+if (botonActualizarP) {
+    document.querySelector("#actualizarP").addEventListener("click", () => {
+        window.location.href = "./pages/actualizarProducto.html#actualizarProductor"
+    })
 }
+
+const botonBusquedaProducto = document.querySelector("#botonBuscadorParaActualizar")
+if (botonBusquedaProducto) {
+    botonBusquedaProducto.addEventListener("click", () => {
+
+        let productoParaActualizar = document.querySelector("#productoParaActualizar").value
+
+        let productoFiltrado = inventario.filter(producto => {
+            return producto.nombre === productoParaActualizar
+        })
+        console.log(productoFiltrado)
+
+        const contenedor = document.querySelector("#resultadoBusqueda")
+
+        if (productoFiltrado.length > 0) {
+
+            contenedor.innerHTML = `
+                <p>Nombre: ${productoFiltrado[0].nombre}</p>
+                <p>Precio: <input type="number" id="nuevoPrecio" value="${productoFiltrado[0].precio}"></p>
+                <p>Stock: <input type="number" id="nuevoStock" value="${productoFiltrado[0].stock}"></p>
+                <button id="guardarCambios">Guardar Cambios</button>
+            `
+
+            const botonGuardar = document.querySelector("#guardarCambios")
+
+            botonGuardar.addEventListener("click", () => {
+
+                let nuevoPrecio = document.querySelector("#nuevoPrecio").value
+                let nuevoStock = document.querySelector("#nuevoStock").value
+
+                productoFiltrado[0].precio = parseFloat(nuevoPrecio)
+                productoFiltrado[0].stock = parseInt(nuevoStock)
+
+                localStorage.setItem("inventario", JSON.stringify(inventario))
+
+                
+                console.log(inventario)
+            })
+
+        } else {
+            contenedor.innerHTML = "<p>Producto no encontrado</p>"
+        }
+    })
+    
+}
+
+
+
+
+
+
 
 //eliminar producto
 function eliminarProducto() {
