@@ -1,5 +1,5 @@
 //array inventario
-const inventario = [];
+let inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 
 /* //menú pantalla
 function mostrarMenu() {
@@ -59,6 +59,7 @@ if (botonAgregar) {
             stock: parseInt(document.querySelector("#stock").value)
         }
         inventario.push(producto)
+        localStorage.setItem("inventario", JSON.stringify(inventario));
         console.log(inventario)
 
         document.querySelector("#nombre").value = ""
