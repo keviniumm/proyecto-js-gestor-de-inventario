@@ -1,44 +1,6 @@
 //array inventario
 let inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 
-/* //menú pantalla
-function mostrarMenu() {
-    return prompt(
-        ` GESTOR DE INVENTARIOS
-1 - Agregar producto
-2 - Buscar producto
-3 - Actualizar stock
-4 - Eliminar producto
-0 - Salir`
-    );
-} */
-
-/* //menu 
-let menu;
-
-while (menu !== "0") {
-    menu = mostrarMenu();
-
-    switch (menu) {
-        case "1":
-            agregarProducto();
-            break;
-        case "2":
-            buscarProducto();
-            break;
-        case "3":
-            actualizarStock();
-            break;
-        case "4":
-            eliminarProducto();
-            break;
-        case "0":
-            alert("Saliendo del sistema");
-            break;
-        default:
-            alert("Opción inválida");
-    }
-} */
 
 //AGREGAR PRODUCTOS
 
@@ -50,6 +12,7 @@ if (botonAgregarP) {
     })
 }
 
+//boton agregar
 const botonAgregar = document.querySelector("#agregar")
 if (botonAgregar) {
     document.querySelector("#agregar").addEventListener("click", () => {
@@ -87,19 +50,32 @@ if (botonBuscarP) {
     })
 }
 
+//boton buscador
 const buscador = document.querySelector("#botonBuscador")
 if (buscador) {
     buscador.addEventListener("click", () => {
-        const valorBuscado = document.querySelector("#productoBuscado").value
+        const productoBuscado = document.querySelector("#productoBuscado").value
 
-        const productoEcontrado = inventario.find(
-            producto => producto.nombre === valorBuscado
+        const productoEncontrado = inventario.find(
+            producto => producto.nombre === productoBuscado
         )
-        console.log(productoEcontrado)
+
+        const contenedor = document.querySelector("#resultadoBusqueda")
+        if (productoEncontrado) {
+            contenedor.innerHTML = `
+                <div>
+                    <p><strong>Nombre:</strong> ${productoEncontrado.nombre}</p>
+                    <p><strong>Precio:</strong> ${productoEncontrado.precio}</p>
+                    <p><strong>Stock:</strong> ${productoEncontrado.stock}</p>
+                </div>
+            `} else {
+            contenedor.innerHTML = "<p>Producto no encontrado</p>"
+        }
+
+        document.querySelector("#productoBuscado").value = ""
+
     })
 }
-
-
 
 
 //ACTUALIZAR STOCK
@@ -112,6 +88,7 @@ if (botonActualizarP) {
     })
 }
 
+//boton actualizar
 const botonBusquedaProducto = document.querySelector("#botonBuscadorParaActualizar")
 if (botonBusquedaProducto) {
     botonBusquedaProducto.addEventListener("click", () => {
@@ -135,7 +112,7 @@ if (botonBusquedaProducto) {
             `
 
             const botonGuardar = document.querySelector("#guardarCambios")
-
+            //boton guardar
             botonGuardar.addEventListener("click", () => {
 
                 let nuevoPrecio = document.querySelector("#nuevoPrecio").value
@@ -146,7 +123,62 @@ if (botonBusquedaProducto) {
 
                 localStorage.setItem("inventario", JSON.stringify(inventario))
 
-                
+            })
+
+        } else {
+            contenedor.innerHTML = "<p>Producto no encontrado</p>"
+        }
+    })
+
+}
+
+//ELIMINAR PRODUCTO
+
+//boton navegador
+const botonEliminarP = document.querySelector("#eliminarP")
+if (botonEliminarP) {
+    document.querySelector("#eliminarP").addEventListener("click", () => {
+        window.location.href = "./pages/eliminarProducto.html#h1Eliminar"
+    })
+}
+
+
+//boton buscar para eliminar
+const buscarParaEliminar = document.querySelector("#botonBuscadorParaEliminar")
+
+if (buscarParaEliminar) {
+    buscarParaEliminar.addEventListener("click", () => {
+
+        const productoBuscado = document.querySelector("#productoParaEliminar").value
+
+        const productoEncontrado = inventario.find(
+            producto => producto.nombre === productoBuscado
+        )
+
+        const contenedor = document.querySelector("#resultadoEliminar")
+
+        if (productoEncontrado) {
+
+            contenedor.innerHTML = `
+                <p>Nombre: ${productoEncontrado.nombre}</p>
+                <p>Precio: ${productoEncontrado.precio}</p>
+                <p>Stock: ${productoEncontrado.stock}</p>
+                <button id="confirmarEliminar">Eliminar Producto</button>
+            `
+            //boton eliminar
+            const botonConfirmar = document.querySelector("#confirmarEliminar")
+
+            botonConfirmar.addEventListener("click", () => {
+                inventario = inventario.filter(producto =>
+                    producto.nombre !== productoBuscado
+                )
+
+                localStorage.setItem("inventario", JSON.stringify(inventario))
+
+                document.querySelector("#productoParaEliminar").value = ""
+                contenedor.innerHTML = ""
+                document.querySelector("#productoParaEliminar").focus()
+
                 console.log(inventario)
             })
 
@@ -154,41 +186,44 @@ if (botonBusquedaProducto) {
             contenedor.innerHTML = "<p>Producto no encontrado</p>"
         }
     })
-    
 }
 
+//LISTA DEL INVENTARIO
 
-
-
-
-
-
-//eliminar producto
-function eliminarProducto() {
-    const nombre = prompt("Ingrese el nombre del producto:");
-    let encontrado = false;
-    const nuevoInventario = [];
-
-    for (let i = 0; i < inventario.length; i++) {
-        if (inventario[i].nombre === nombre) {
-            encontrado = true;
-        } else {
-            nuevoInventario.push(inventario[i]);
-        }
-    }
-
-    if (encontrado) {
-        inventario.length = 0;
-
-        for (let i = 0; i < nuevoInventario.length; i++) {
-            inventario.push(nuevoInventario[i]);
-        }
-
-        alert("Producto eliminado correctamente");
-    } else {
-        alert("Producto no encontrado");
-    }
+//boton navegador
+const botonListaP = document.querySelector("#listaP")
+if (botonListaP) {
+    document.querySelector("#listaP").addEventListener("click", () => {
+        window.location.href = "./pages/listaProductos.html#h1lista"
+    })
 }
 
+//boton lista
+const botonMostrarLista = document.querySelector("#mostrarLista")
+if (botonMostrarLista) {
+    botonMostrarLista.addEventListener("click", () => {
 
+        const contenedor = document.querySelector("#listaProductos")
 
+        if (inventario.length === 0) {
+            contenedor.innerHTML = "<p>No hay productos en el inventario</p>"
+            return
+        }
+
+        let listaHTML = ""
+
+        for (let i = 0; i < inventario.length; i++) {
+
+            listaHTML += `
+                <div>
+                    <p>Nombre: ${inventario[i].nombre}</p>
+                    <p>Precio: ${inventario[i].precio}</p>
+                    <p>Stock: ${inventario[i].stock}</p>
+                    <hr>
+                </div>
+            `
+        }
+
+        contenedor.innerHTML = listaHTML
+    })
+}
