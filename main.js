@@ -124,7 +124,6 @@ if (botonBusquedaProducto) {
                 localStorage.setItem("inventario", JSON.stringify(inventario))
 
             })
-
         } else {
             contenedor.innerHTML = "<p>Producto no encontrado</p>"
         }
@@ -179,7 +178,6 @@ if (buscarParaEliminar) {
                 contenedor.innerHTML = ""
                 document.querySelector("#productoParaEliminar").focus()
 
-                console.log(inventario)
             })
 
         } else {
