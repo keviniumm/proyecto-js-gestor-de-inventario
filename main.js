@@ -1,4 +1,4 @@
-//array inventario
+//ARRAY INVENTARIO
 let inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 
 
@@ -21,15 +21,91 @@ if (botonAgregar) {
             precio: parseFloat(document.querySelector("#precio").value),
             stock: parseInt(document.querySelector("#stock").value)
         }
+
+        //validacion
+        if (!producto.nombre) {
+            Swal.fire("El nombre no puede estar vacio")
+            return
+        }
+        if (isNaN(producto.precio) || producto.precio <= 0) {
+            Swal.fire("El precio debe ser un numero mayor a 0")
+            return
+        }
+        if (isNaN(producto.stock) || producto.stock < 0) {
+            Swal.fire("El stock debe ser un numero entero igual o mayor a 0")
+            return
+        }
+
         inventario.push(producto)
         localStorage.setItem("inventario", JSON.stringify(inventario));
-        console.log(inventario)
+
 
         document.querySelector("#nombre").value = ""
         document.querySelector("#precio").value = ""
         document.querySelector("#stock").value = ""
     })
 }
+
+//boton importar producto
+const botonImportar = document.querySelector("#importarProducto")
+if (botonImportar) {
+    botonImportar.addEventListener("click", cargarProductosDesdeJSON)
+
+    async function cargarProductosDesdeJSON() {
+
+        try {
+            const respuesta = await fetch("../data/ProductosImportar.json")
+
+            if (!respuesta.ok) {
+                Swal.fire({
+                    title: "Error",
+                    text: "Error al cargar el archivo JSON",
+                    icon: "error",
+                    confirmButtonText: "Aceptar"
+                })
+                throw new Error("Error al cargar el archivo JSON")
+            }
+
+            const productos = await respuesta.json()
+            console.log(productos)
+
+            const contenedor = document.querySelector("#listaImportacion");
+            contenedor.innerHTML = ""
+
+            productos.productos.forEach((producto, index) => {
+                const div = document.createElement("div")
+                const boton = document.createElement("button")
+                boton.textContent = "Importar"
+
+                //boton importar del JSON
+                boton.addEventListener("click", () => {
+                    let inventario = JSON.parse(localStorage.getItem("inventario")) || []
+                    inventario.push(producto)
+                    localStorage.setItem("inventario", JSON.stringify(inventario))
+                    console.log("producto importado")
+                    Swal.fire({
+                        title: "¡Listo!",
+                        text: `El producto "${producto.nombre}" se importó correctamente`,
+                        icon: "success",
+                        confirmButtonText: "Aceptar"
+                    })
+                })
+
+                div.innerHTML = `
+        <p><strong>${producto.nombre}</strong></p>
+        <p>Precio: ${producto.precio}</p>
+        <p>Stock: ${producto.stock}</p>
+    `
+
+                div.appendChild(boton)
+                contenedor.appendChild(div)
+            })
+        } catch (error) {
+            console.error("Hubo un problema:", error)
+        }
+    }
+}
+
 
 //boton volver menu
 const botonVolverMenuA = document.querySelector("#salir")
@@ -56,8 +132,14 @@ if (buscador) {
     buscador.addEventListener("click", () => {
         const productoBuscado = document.querySelector("#productoBuscado").value
 
+        //validacion
+        if (!productoBuscado) {
+            Swal.fire("Ingresa el nombre del producto a buscar")
+            return
+        }
+
         const productoEncontrado = inventario.find(
-            producto => producto.nombre === productoBuscado
+            producto => producto.nombre.toLowerCase() === productoBuscado
         )
 
         const contenedor = document.querySelector("#resultadoBusqueda")
@@ -95,8 +177,14 @@ if (botonBusquedaProducto) {
 
         let productoParaActualizar = document.querySelector("#productoParaActualizar").value
 
+        //validacion
+        if (!productoParaActualizar) {
+            Swal.fire("Ingresa el nombre del producto a actualizar")
+            return
+        }
+
         let productoFiltrado = inventario.filter(producto => {
-            return producto.nombre === productoParaActualizar
+            return producto.nombre.toLowerCase() === productoParaActualizar
         })
         console.log(productoFiltrado)
 
@@ -118,11 +206,28 @@ if (botonBusquedaProducto) {
                 let nuevoPrecio = document.querySelector("#nuevoPrecio").value
                 let nuevoStock = document.querySelector("#nuevoStock").value
 
+                //validacion precio
+                if (isNaN(nuevoPrecio) || parseFloat(nuevoPrecio) <= 0) {
+                    Swal.fire("El precio debe ser un número mayor a 0")
+                    return
+                }
+                //validacion stock
+                if (isNaN(nuevoStock) || parseInt(nuevoStock) < 0) {
+                    Swal.fire("El stock debe ser un número entero igual o mayor a 0")
+                    return
+                }
+
                 productoFiltrado[0].precio = parseFloat(nuevoPrecio)
                 productoFiltrado[0].stock = parseInt(nuevoStock)
 
                 localStorage.setItem("inventario", JSON.stringify(inventario))
 
+                Swal.fire({
+                    title: "¡Éxito!",
+                    text: `El producto "${productoFiltrado[0].nombre}" se actualizo correctamente`,
+                    icon: "success",
+                    confirmButtonText: "Aceptar"
+                })
             })
         } else {
             contenedor.innerHTML = "<p>Producto no encontrado</p>"
@@ -150,8 +255,16 @@ if (buscarParaEliminar) {
 
         const productoBuscado = document.querySelector("#productoParaEliminar").value
 
+        //validacion
+        if (!productoBuscado) {
+            Swal.fire("Ingresa el nombre correcto del producto a eliminar")
+            return
+        }
+
+        let inventario = JSON.parse(localStorage.getItem("inventario")) || []
+
         const productoEncontrado = inventario.find(
-            producto => producto.nombre === productoBuscado
+            producto => producto.nombre.toLowerCase() === productoBuscado
         )
 
         const contenedor = document.querySelector("#resultadoEliminar")
@@ -168,16 +281,29 @@ if (buscarParaEliminar) {
             const botonConfirmar = document.querySelector("#confirmarEliminar")
 
             botonConfirmar.addEventListener("click", () => {
-                inventario = inventario.filter(producto =>
-                    producto.nombre !== productoBuscado
-                )
+                Swal.fire({
+                    title: "¿Estás seguro?",
+                    text: `Se eliminará el producto "${productoBuscado}" del inventario`,
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonText: "Sí, eliminar",
+                    cancelButtonText: "Cancelar"
+                }).then((result) => {
+                    if (!result.isConfirmed) return
 
-                localStorage.setItem("inventario", JSON.stringify(inventario))
 
-                document.querySelector("#productoParaEliminar").value = ""
-                contenedor.innerHTML = ""
-                document.querySelector("#productoParaEliminar").focus()
+                    inventario = inventario.filter(producto =>
+                        producto.nombre !== productoBuscado
+                    )
 
+                    localStorage.setItem("inventario", JSON.stringify(inventario))
+
+                    document.querySelector("#productoParaEliminar").value = ""
+                    contenedor.innerHTML = ""
+                    document.querySelector("#productoParaEliminar").focus()
+
+                    Swal.fire("¡Eliminado!", `El producto "${productoBuscado}" fue eliminado correctamente`, "success")
+                })
             })
 
         } else {
@@ -185,6 +311,7 @@ if (buscarParaEliminar) {
         }
     })
 }
+
 
 //LISTA DEL INVENTARIO
 
@@ -204,7 +331,12 @@ if (botonMostrarLista) {
         const contenedor = document.querySelector("#listaProductos")
 
         if (inventario.length === 0) {
-            contenedor.innerHTML = "<p>No hay productos en el inventario</p>"
+            Swal.fire({
+                title: "Inventario vacío",
+                text: "No hay productos en el inventario",
+                icon: "warning",
+                confirmButtonText: "Aceptar"
+            })
             return
         }
 

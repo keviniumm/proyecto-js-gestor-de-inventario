@@ -1,0 +1,24 @@
+{
+    "productos": [
+        {
+            "nombre": "Notebook",
+            "precio": 850000,
+            "stock": 10
+        },
+        {
+            "nombre": "Mouse",
+            "precio": 15000,
+            "stock": 25
+        },
+        {
+            "nombre": "Teclado Inalambrico",
+            "precio": 45000,
+            "stock": 15
+        },
+        {
+            "nombre": "Monitor",
+            "precio": 200000,
+            "stock": 8
+        }
+    ]
+}
