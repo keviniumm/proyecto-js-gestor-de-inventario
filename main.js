@@ -12,7 +12,7 @@ if (botonAgregarP) {
     })
 }
 
-//funcion obtenerdatos
+//funcion obtener datos
 function obtenerDatosFormulario() {
     return {
         nombre: document.querySelector("#nombre").value,
@@ -45,19 +45,31 @@ function limpiarFormulario() {
     document.querySelector("#stock").value = ""
 }
 
+//funcion localstorage
+function guardarInventario() {
+    localStorage.setItem("inventario", JSON.stringify(inventario))
+}
+
+
 //boton agregar
 const botonAgregar = document.querySelector("#agregar")
 if (botonAgregar) {
     botonAgregar.addEventListener("click", () => {
-        const producto = obtenerDatosFormulario()
 
-        if (!validarProducto(producto)) return
+        const datos = obtenerDatosFormulario()
+
+        if (!validarProducto(datos)) return
+
+        const producto = {
+            ...datos,
+            id: inventario.length
+        }
 
         inventario.push(producto)
-        localStorage.setItem("inventario", JSON.stringify(inventario));
+        guardarInventario()
 
         limpiarFormulario()
-        
+
     })
 }
 
@@ -82,22 +94,29 @@ if (botonImportar) {
             }
 
             const productos = await respuesta.json()
-            console.log(productos)
+
 
             const contenedor = document.querySelector("#listaImportacion");
             contenedor.innerHTML = ""
 
-            productos.productos.forEach((producto, index) => {
+            productos.productos.forEach((producto) => {
                 const div = document.createElement("div")
                 const boton = document.createElement("button")
                 boton.textContent = "Importar"
 
+
+
                 //boton importar del JSON
                 boton.addEventListener("click", () => {
-                    let inventario = JSON.parse(localStorage.getItem("inventario")) || []
-                    inventario.push(producto)
-                    localStorage.setItem("inventario", JSON.stringify(inventario))
-                    console.log("producto importado")
+
+                    //crear producto con id
+                    const productoConId = {
+                        ...producto,
+                        id: inventario.length
+                    }
+                    inventario.push(productoConId)
+                    guardarInventario()
+
                     Swal.fire({
                         title: "¡Listo!",
                         text: `El producto "${producto.nombre}" se importó correctamente`,
@@ -201,7 +220,7 @@ if (botonBusquedaProducto) {
         let productoFiltrado = inventario.filter(producto => {
             return producto.nombre.toLowerCase() === productoParaActualizar
         })
-        console.log(productoFiltrado)
+
 
         const contenedor = document.querySelector("#resultadoBusqueda")
 
