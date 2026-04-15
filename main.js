@@ -7,42 +7,57 @@ let inventario = JSON.parse(localStorage.getItem("inventario")) || [];
 //boton navegador
 const botonAgregarP = document.querySelector("#agregarP")
 if (botonAgregarP) {
-    document.querySelector("#agregarP").addEventListener("click", () => {
+    botonAgregarP.addEventListener("click", () => {
         window.location.href = "./pages/agregarProductos.html#agregarProducto"
     })
+}
+
+//funcion obtenerdatos
+function obtenerDatosFormulario() {
+    return {
+        nombre: document.querySelector("#nombre").value,
+        precio: parseFloat(document.querySelector("#precio").value),
+        stock: parseInt(document.querySelector("#stock").value),
+    }
+}
+
+//funcion validacion
+function validarProducto(producto) {
+    if (!producto.nombre) {
+        Swal.fire("El nombre no puede estar vacio")
+        return false
+    }
+    if (isNaN(producto.precio) || producto.precio <= 0) {
+        Swal.fire("El precio debe ser un numero mayor a 0")
+        return false
+    }
+    if (isNaN(producto.stock) || producto.stock < 0) {
+        Swal.fire("El stock debe ser un numero entero igual o mayor a 0")
+        return false
+    }
+
+    return true
+}
+//funcion limpiar
+function limpiarFormulario() {
+    document.querySelector("#nombre").value = ""
+    document.querySelector("#precio").value = ""
+    document.querySelector("#stock").value = ""
 }
 
 //boton agregar
 const botonAgregar = document.querySelector("#agregar")
 if (botonAgregar) {
-    document.querySelector("#agregar").addEventListener("click", () => {
-        const producto = {
-            nombre: document.querySelector("#nombre").value,
-            precio: parseFloat(document.querySelector("#precio").value),
-            stock: parseInt(document.querySelector("#stock").value)
-        }
+    botonAgregar.addEventListener("click", () => {
+        const producto = obtenerDatosFormulario()
 
-        //validacion
-        if (!producto.nombre) {
-            Swal.fire("El nombre no puede estar vacio")
-            return
-        }
-        if (isNaN(producto.precio) || producto.precio <= 0) {
-            Swal.fire("El precio debe ser un numero mayor a 0")
-            return
-        }
-        if (isNaN(producto.stock) || producto.stock < 0) {
-            Swal.fire("El stock debe ser un numero entero igual o mayor a 0")
-            return
-        }
+        if (!validarProducto(producto)) return
 
         inventario.push(producto)
         localStorage.setItem("inventario", JSON.stringify(inventario));
 
-
-        document.querySelector("#nombre").value = ""
-        document.querySelector("#precio").value = ""
-        document.querySelector("#stock").value = ""
+        limpiarFormulario()
+        
     })
 }
 
@@ -110,7 +125,7 @@ if (botonImportar) {
 //boton volver menu
 const botonVolverMenuA = document.querySelector("#salir")
 if (botonVolverMenuA) {
-    document.querySelector("#salir").addEventListener("click", () => {
+    botonVolverMenuA.addEventListener("click", () => {
         window.location.href = "../index.html"
     })
 }
