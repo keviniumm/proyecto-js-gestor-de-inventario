@@ -175,8 +175,10 @@ if (buscador) {
             return
         }
 
+        const textoBusqueda = productoBuscado.toLowerCase()
+
         const productoEncontrado = inventario.find(
-            producto => producto.nombre.toLowerCase().includes(productoBuscado.toLowerCase())
+            producto => producto.nombre.toLowerCase().includes(textoBusqueda)
         )
 
         const contenedor = document.querySelector("#resultadoBusqueda")
@@ -221,19 +223,21 @@ if (botonBusquedaProducto) {
             return
         }
 
-        let productoFiltrado = inventario.filter(producto => {
-            return producto.nombre.toLowerCase() === productoParaActualizar.toLowerCase()
+        const textoActualizar = productoParaActualizar.trim().toLowerCase()
+
+        let productoFiltrado = inventario.find(producto => { //CORRECCION
+            return producto.nombre.toLowerCase() === textoActualizar
         })
 
 
         const contenedor = document.querySelector("#resultadoBusqueda")
 
-        if (productoFiltrado.length > 0) {
+        if (productoFiltrado) {
 
             contenedor.innerHTML = `
-                <p>Nombre: ${productoFiltrado[0].nombre}</p>
-                <p>Precio: <input type="number" id="nuevoPrecio" value="${productoFiltrado[0].precio}"></p>
-                <p>Stock: <input type="number" id="nuevoStock" value="${productoFiltrado[0].stock}"></p>
+                <p>Nombre: ${productoFiltrado.nombre}</p>
+                <p>Precio: <input type="number" id="nuevoPrecio" value="${productoFiltrado.precio}"></p>
+                <p>Stock: <input type="number" id="nuevoStock" value="${productoFiltrado.stock}"></p>
                 <button id="guardarCambios">Guardar Cambios</button>
             `
 
@@ -258,14 +262,14 @@ if (botonBusquedaProducto) {
                     return
                 }
 
-                productoFiltrado[0].precio = nuevoPrecio
-                productoFiltrado[0].stock = nuevoStock
+                productoFiltrado.precio = nuevoPrecio
+                productoFiltrado.stock = nuevoStock
 
                 guardarInventario()
 
                 Swal.fire({
                     title: "¡Éxito!",
-                    text: `El producto "${productoFiltrado[0].nombre}" se actualizo correctamente`,
+                    text: `El producto "${productoFiltrado.nombre}" se actualizo correctamente`,
                     icon: "success",
                     confirmButtonText: "Aceptar"
                 })
@@ -282,7 +286,7 @@ if (botonBusquedaProducto) {
 //boton navegador
 const botonEliminarP = document.querySelector("#eliminarP")
 if (botonEliminarP) {
-    document.querySelector("#eliminarP").addEventListener("click", () => {
+    botonEliminarP.addEventListener("click", () => {
         window.location.href = "./pages/eliminarProducto.html#h1Eliminar"
     })
 }
@@ -294,18 +298,20 @@ const buscarParaEliminar = document.querySelector("#botonBuscadorParaEliminar")
 if (buscarParaEliminar) {
     buscarParaEliminar.addEventListener("click", () => {
 
-        const productoBuscado = document.querySelector("#productoParaEliminar").value
+        const inputEliminar = document.querySelector("#productoParaEliminar")
+        const productoBuscado = inputEliminar.value
+
+
 
         //validacion
-        if (!productoBuscado) {
+        if (!productoBuscado.trim()) {
             Swal.fire("Ingresa el nombre correcto del producto a eliminar")
             return
         }
-
-        let inventario = JSON.parse(localStorage.getItem("inventario")) || []
+        const textoBuscado = productoBuscado.toLowerCase()
 
         const productoEncontrado = inventario.find(
-            producto => producto.nombre.toLowerCase() === productoBuscado
+            producto => producto.nombre.toLowerCase() === textoBuscado
         )
 
         const contenedor = document.querySelector("#resultadoEliminar")
@@ -334,14 +340,15 @@ if (buscarParaEliminar) {
 
 
                     inventario = inventario.filter(producto =>
-                        producto.nombre !== productoBuscado
+                        producto.nombre.toLowerCase() !== textoBuscado
                     )
 
-                    localStorage.setItem("inventario", JSON.stringify(inventario))
+                    guardarInventario()
 
-                    document.querySelector("#productoParaEliminar").value = ""
+                    inputEliminar.value = ""
                     contenedor.innerHTML = ""
-                    document.querySelector("#productoParaEliminar").focus()
+                    inputEliminar.focus()
+
 
                     Swal.fire("¡Eliminado!", `El producto "${productoBuscado}" fue eliminado correctamente`, "success")
                 })
@@ -359,7 +366,7 @@ if (buscarParaEliminar) {
 //boton navegador
 const botonListaP = document.querySelector("#listaP")
 if (botonListaP) {
-    document.querySelector("#listaP").addEventListener("click", () => {
+    botonListaP.addEventListener("click", () => {
         window.location.href = "./pages/listaProductos.html#h1lista"
     })
 }
@@ -383,17 +390,17 @@ if (botonMostrarLista) {
 
         let listaHTML = ""
 
-        for (let i = 0; i < inventario.length; i++) {
+        inventario.forEach(producto => {
 
             listaHTML += `
                 <div>
-                    <p>Nombre: ${inventario[i].nombre}</p>
-                    <p>Precio: ${inventario[i].precio}</p>
-                    <p>Stock: ${inventario[i].stock}</p>
+                    <p>Nombre: ${producto.nombre}</p>
+                    <p>Precio: ${producto.precio}</p>
+                    <p>Stock: ${producto.stock}</p>
                     <hr>
                 </div>
             `
-        }
+        })
 
         contenedor.innerHTML = listaHTML
     })
