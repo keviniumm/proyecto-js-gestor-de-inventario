@@ -155,7 +155,7 @@ if (botonVolverMenuA) {
 //boton navegador
 const botonBuscarP = document.querySelector("#buscarP")
 if (botonBuscarP) {
-    document.querySelector("#buscarP").addEventListener("click", () => {
+    botonBuscarP.addEventListener("click", () => {
         window.location.href = "./pages/buscarProducto.html#buscador"
     })
 }
@@ -164,16 +164,19 @@ if (botonBuscarP) {
 const buscador = document.querySelector("#botonBuscador")
 if (buscador) {
     buscador.addEventListener("click", () => {
-        const productoBuscado = document.querySelector("#productoBuscado").value
+
+        const inputBusqueda = document.querySelector("#productoBuscado")
+        const productoBuscado = inputBusqueda.value
+
 
         //validacion
-        if (!productoBuscado) {
+        if (!productoBuscado.trim()) {
             Swal.fire("Ingresa el nombre del producto a buscar")
             return
         }
 
         const productoEncontrado = inventario.find(
-            producto => producto.nombre.toLowerCase() === productoBuscado
+            producto => producto.nombre.toLowerCase().includes(productoBuscado.toLowerCase())
         )
 
         const contenedor = document.querySelector("#resultadoBusqueda")
@@ -188,7 +191,7 @@ if (buscador) {
             contenedor.innerHTML = "<p>Producto no encontrado</p>"
         }
 
-        document.querySelector("#productoBuscado").value = ""
+        inputBusqueda.value = ""
 
     })
 }
@@ -199,7 +202,7 @@ if (buscador) {
 //boton navegador
 const botonActualizarP = document.querySelector("#actualizarP")
 if (botonActualizarP) {
-    document.querySelector("#actualizarP").addEventListener("click", () => {
+    botonActualizarP.addEventListener("click", () => {
         window.location.href = "./pages/actualizarProducto.html#actualizarProductor"
     })
 }
@@ -209,16 +212,17 @@ const botonBusquedaProducto = document.querySelector("#botonBuscadorParaActualiz
 if (botonBusquedaProducto) {
     botonBusquedaProducto.addEventListener("click", () => {
 
-        let productoParaActualizar = document.querySelector("#productoParaActualizar").value
+        const inputActualizar = document.querySelector("#productoParaActualizar")
+        let productoParaActualizar = inputActualizar.value
 
         //validacion
-        if (!productoParaActualizar) {
+        if (!productoParaActualizar.trim()) {
             Swal.fire("Ingresa el nombre del producto a actualizar")
             return
         }
 
         let productoFiltrado = inventario.filter(producto => {
-            return producto.nombre.toLowerCase() === productoParaActualizar
+            return producto.nombre.toLowerCase() === productoParaActualizar.toLowerCase()
         })
 
 
@@ -237,24 +241,27 @@ if (botonBusquedaProducto) {
             //boton guardar
             botonGuardar.addEventListener("click", () => {
 
-                let nuevoPrecio = document.querySelector("#nuevoPrecio").value
-                let nuevoStock = document.querySelector("#nuevoStock").value
+                const inputPrecio = document.querySelector("#nuevoPrecio")
+                const inputStock = document.querySelector("#nuevoStock")
+
+                let nuevoPrecio = parseFloat(inputPrecio.value)
+                let nuevoStock = parseInt(inputStock.value)
 
                 //validacion precio
-                if (isNaN(nuevoPrecio) || parseFloat(nuevoPrecio) <= 0) {
+                if (isNaN(nuevoPrecio) || nuevoPrecio <= 0) {
                     Swal.fire("El precio debe ser un número mayor a 0")
                     return
                 }
                 //validacion stock
-                if (isNaN(nuevoStock) || parseInt(nuevoStock) < 0) {
+                if (isNaN(nuevoStock) || nuevoStock < 0) {
                     Swal.fire("El stock debe ser un número entero igual o mayor a 0")
                     return
                 }
 
-                productoFiltrado[0].precio = parseFloat(nuevoPrecio)
-                productoFiltrado[0].stock = parseInt(nuevoStock)
+                productoFiltrado[0].precio = nuevoPrecio
+                productoFiltrado[0].stock = nuevoStock
 
-                localStorage.setItem("inventario", JSON.stringify(inventario))
+                guardarInventario()
 
                 Swal.fire({
                     title: "¡Éxito!",
