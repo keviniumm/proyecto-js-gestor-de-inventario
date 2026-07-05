@@ -112,6 +112,13 @@ if (botonAgregar) {
         inventario.push(producto)
         guardarInventario()
 
+        Swal.fire({
+            title: "¡Éxito!",
+            text: `El producto "${producto.nombre}" se agregó correctamente`,
+            icon: "success",
+            confirmButtonText: "Aceptar"
+        })
+
         limpiarFormulario()
 
     })
@@ -286,7 +293,7 @@ if (botonBusquedaProducto) {
 
         const textoActualizar = productoParaActualizar.trim().toLowerCase()
 
-        let productoFiltrado = inventario.find(producto => { 
+        let productoFiltrado = inventario.find(producto => {
             return producto.nombre.toLowerCase() === textoActualizar
         })
 
@@ -299,7 +306,7 @@ if (botonBusquedaProducto) {
                 <p>Nombre: ${productoFiltrado.nombre}</p>
                 <p>Precio: <input type="number" id="nuevoPrecio" value="${productoFiltrado.precio}"></p>
                 <p>Stock: <input type="number" id="nuevoStock" value="${productoFiltrado.stock}"></p>
-                <button id="guardarCambios">Guardar Cambios</button>
+                <button id="guardarCambios">Guardar Cambio</button>
             `
 
             const botonGuardar = document.querySelector("#guardarCambios")

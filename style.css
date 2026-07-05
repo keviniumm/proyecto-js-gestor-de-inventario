@@ -1,0 +1,77 @@
+body {
+    background-color: #f1f1f1;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 40px;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+ul {
+    list-style: none;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0;
+}
+
+li {
+    background-color: white;
+    margin-bottom: 20px;
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+button {
+    background-color: #000000;
+    color: white;
+    border: none;
+    padding: 10px 18px;
+    margin: 5px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #555555;
+}
+
+input {
+    padding: 10px;
+    margin: 5px;
+    border: 1px solid #cccccc;
+}
+
+#resultadoBusqueda,
+#resultadoEliminar,
+#listaProductos,
+#listaImportacion {
+    max-width: 700px;
+    margin: 20px auto;
+}
+
+#resultadoBusqueda > div,
+#resultadoEliminar > div,
+#listaProductos > div,
+#listaImportacion > div {
+    background-color: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
+}
+
+@media (max-width: 600px) {
+    body {
+        padding: 20px;
+    }
+
+    input {
+        box-sizing: border-box;
+        width: 100%;
+        margin: 5px 0;
+    }
+}
