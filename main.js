@@ -1,5 +1,6 @@
+
 //ARRAY INVENTARIO
-let inventario = JSON.parse(localStorage.getItem("inventario")) || [];
+let inventario = []
 
 
 //AGREGAR PRODUCTOS
@@ -45,14 +46,57 @@ function limpiarFormulario() {
     document.querySelector("#stock").value = ""
 }
 
-//funcion localstorage
+//funcion guardar inventario
 function guardarInventario() {
     localStorage.setItem("inventario", JSON.stringify(inventario))
 }
 
+//funcion cargar productos del JSON
+async function obtenerProductosDesdeJSON() {
+    const rutaJSON = window.location.pathname.includes("/pages/")
+        ? "../data/ProductosImportar.json"
+        : "./data/ProductosImportar.json"
+
+    const respuesta = await fetch(rutaJSON)
+
+    if (!respuesta.ok) {
+        throw new Error("No se pudo cargar el archivo JSON")
+    }
+
+    const datos = await respuesta.json()
+
+    return datos.productos
+}
+
+async function cargarInventarioInicial() {
+
+    const inventarioGuardado = localStorage.getItem("inventario")
+
+    if (inventarioGuardado) {
+        inventario = JSON.parse(inventarioGuardado)
+        return
+    }
+
+    try {
+
+        inventario = await obtenerProductosDesdeJSON()
+
+        guardarInventario()
+    }
+
+    catch {
+
+        Swal.fire({
+            title: "Error",
+            text: "No fue posible cargar el inventario inicial.",
+            icon: "error"
+        })
+    }
+}
 
 //boton agregar
 const botonAgregar = document.querySelector("#agregar")
+
 if (botonAgregar) {
     botonAgregar.addEventListener("click", () => {
 
@@ -62,7 +106,7 @@ if (botonAgregar) {
 
         const producto = {
             ...datos,
-            id: inventario.length
+            id: Date.now()
         }
 
         inventario.push(producto)
@@ -81,25 +125,15 @@ if (botonImportar) {
     async function cargarProductosDesdeJSON() {
 
         try {
-            const respuesta = await fetch("../data/ProductosImportar.json")
+            const productos = await
 
-            if (!respuesta.ok) {
-                Swal.fire({
-                    title: "Error",
-                    text: "Error al cargar el archivo JSON",
-                    icon: "error",
-                    confirmButtonText: "Aceptar"
-                })
-                throw new Error("Error al cargar el archivo JSON")
-            }
-
-            const productos = await respuesta.json()
+                obtenerProductosDesdeJSON()
 
 
             const contenedor = document.querySelector("#listaImportacion");
             contenedor.innerHTML = ""
 
-            productos.productos.forEach((producto) => {
+            productos.forEach((producto) => {
                 const div = document.createElement("div")
                 const boton = document.createElement("button")
                 boton.textContent = "Importar"
@@ -112,7 +146,7 @@ if (botonImportar) {
                     //crear producto con id
                     const productoConId = {
                         ...producto,
-                        id: inventario.length
+                        id: Date.now()
                     }
                     inventario.push(productoConId)
                     guardarInventario()
@@ -129,16 +163,43 @@ if (botonImportar) {
         <p><strong>${producto.nombre}</strong></p>
         <p>Precio: ${producto.precio}</p>
         <p>Stock: ${producto.stock}</p>
+        <hr>
     `
 
                 div.appendChild(boton)
                 contenedor.appendChild(div)
             })
-        } catch (error) {
-            console.error("Hubo un problema:", error)
+        }
+        catch {
+
+            Swal.fire({
+                title: "Error",
+                text: "Ocurrió un problema al importar los productos.",
+                icon: "error"
+            })
+
         }
     }
 }
+
+//boton restablecer inventario
+const botonRestablecer = document.querySelector("#restablecerInventario")
+
+if (botonRestablecer) {
+    botonRestablecer.addEventListener("click", async () => {
+        inventario = await obtenerProductosDesdeJSON()
+
+        guardarInventario()
+
+        Swal.fire({
+            title: "Inventario restablecido",
+            text: "El inventario volvió a su estado original",
+            icon: "success",
+            confirmButtonText: "Aceptar"
+        })
+    })
+}
+
 
 
 //boton volver menu
@@ -225,7 +286,7 @@ if (botonBusquedaProducto) {
 
         const textoActualizar = productoParaActualizar.trim().toLowerCase()
 
-        let productoFiltrado = inventario.find(producto => { //CORRECCION
+        let productoFiltrado = inventario.find(producto => { 
             return producto.nombre.toLowerCase() === textoActualizar
         })
 
@@ -405,3 +466,5 @@ if (botonMostrarLista) {
         contenedor.innerHTML = listaHTML
     })
 }
+
+cargarInventarioInicial()
